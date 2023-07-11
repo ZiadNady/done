@@ -46,13 +46,13 @@ stateValues = {
 
     "gold-1" : 60,
 
-    "platinum-4" : 70,
+    "diamond-4" : 70,
 
-    "platinum-3" : 80,
+    "diamond-3" : 80,
 
-    "platinum-2" : 90,
+    "diamond-2" : 90,
 
-    "platinum-1" : 100,
+    "diamond-1" : 100,
 
     "platinum-4" : 145,
 
@@ -115,6 +115,7 @@ function changeState() {
     setDesiredState(desired)
     desiredValue    = (desired['state'] == 'master') ? 250 : calcStateValue(desired['state'],desired['level']) 
     amount          = desiredValue - currentValue;
+    $('#payment-request-button button').prop('disabled',(amount < 0))
     $('#Cost_amount').text(amount)
 }
 
