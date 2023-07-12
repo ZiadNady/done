@@ -116,6 +116,12 @@ function changeState() {
     setDesiredState(desired)
     desiredValue    = (desired['state'] == 'master') ? 250 : calcStateValue(desired['state'],desired['level']) 
 
+    if (desired["state"] === "master") {
+        $("#hide").hide();
+      } else {
+        $("#hide").show();
+      }
+
     screenShareChecked = $('#screenShare').is(':checked');
     streamGamesChecked = $('#streamGames').is(':checked');
 
@@ -127,6 +133,12 @@ function changeState() {
 
     if (streamGamesChecked) {
         amount =amount+ (amount * 15/100);
+    }
+
+    amount = amount.toFixed(2);
+
+    if(current['state'] == desired['state']&&current['level'] == desired['level']){
+        amount = 0;
     }
 
     $('#payment-request-button button').prop('disabled',(amount < 0))
