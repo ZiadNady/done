@@ -46,29 +46,30 @@ stateValues = {
 
     "gold-1" : 60,
 
-    "diamond-4" : 70,
+    "diamond-4" : 145,
 
-    "diamond-3" : 80,
+    "diamond-3" : 170,
 
-    "diamond-2" : 90,
+    "diamond-2" : 195,
 
-    "diamond-1" : 100,
+    "diamond-1" : 220,
 
-    "platinum-4" : 145,
+    "platinum-4" : 70,
 
-    "platinum-3" : 170,
+    "platinum-3" : 80,
 
-    "platinum-2" : 195,
+    "platinum-2" : 90,
 
-    "platinum-1" : 220,
+    "platinum-1" : 100,
 
     "master": 250,
 }
-function getCurrentState() { 
-    state    = $('.current-rank [clickable=clickable].active').find('div img').attr('title').toLowerCase();
-    level    = $('.current-rank [clickable="level"].active').attr('zigidkey');
-    return   {"state" :state , 'level' : level}
-}
+function getCurrentState() {
+    var state = $('.current-rank [clickable="clickable"].active').find('div img').attr('title').toLowerCase();
+    var level = $('.current-rank [clickable="level"].active').text();   
+    return { "state": state, "level": level };
+  }
+  
 function setCurrentState(data) { 
     image = levelImages[data['state']]
     $('.current-rank-image').attr("src",image)
@@ -81,7 +82,7 @@ function setCurrentState(data) {
 
 function getDesiredState() { 
     state    = $('.desired-rank [clickable=clickable].active').find('div img').attr('title').toLowerCase();
-    level    = $('.desired-rank [clickable="level"].active').attr('zigidkey');
+    level    = $('.desired-rank [clickable="level"].active').text();
     return   {"state" :state , 'level' : level}
 }
 function setDesiredState(data) { 
@@ -92,18 +93,18 @@ function setDesiredState(data) {
     $('.desired-bg').addClass(data['state']+'-bg')
  }
 function getStateValue(state) { 
-    if(state="I")
+    if(state=="I")
         return 1 
-    else if(state="II")
+    else if(state=="II")
         return 2
-    else if(state="III")
+    else if(state=="III")
         return 3
-    else if(state="IV")
+    else if(state=="IV")
         return 4
  }
 function calcStateValue(state,level) {
-    console.log(state);  
-    level = getStateValue(state)
+    level = getStateValue(level)
+    
     return stateValues[state+"-"+level]
 }
 
@@ -114,9 +115,26 @@ function changeState() {
     desired         = getDesiredState()
     setDesiredState(desired)
     desiredValue    = (desired['state'] == 'master') ? 250 : calcStateValue(desired['state'],desired['level']) 
-    amount          = desiredValue - currentValue;
+
+    screenShareChecked = $('#screenShare').is(':checked');
+    streamGamesChecked = $('#streamGames').is(':checked');
+
+    amount = desiredValue - currentValue;  
+
+    if (screenShareChecked) {
+        amount =amount+ (amount * 40/100)+5.4;
+    }
+
+    if (streamGamesChecked) {
+        amount =amount+ (amount * 15/100);
+    }
+
     $('#payment-request-button button').prop('disabled',(amount < 0))
-    $('#Cost_amount').text(amount)
+    if (amount <= 0) {
+        $('#Cost_amount').text('Invalid details').css('color', 'rgb(255, 145, 85)');
+    } else {
+        $('#Cost_amount').text("$"+amount).css('color', '');
+    }
 }
 
 $("[clickable=clickable]").click(function (e) { 
